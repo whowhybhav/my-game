@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#14121c"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>Devil Calling Hell</title>
 <style>
@@ -45,6 +45,13 @@ const cv=document.getElementById('c'),x=cv.getContext('2d',{alpha:false}),W=640,
 function fit(){const d=Math.min(devicePixelRatio||1,2);let w=Math.max(160,Math.min(cw.clientWidth,cw.clientHeight*16/9)|0);const h=w*9/16|0;cv.style.width=w+'px';cv.style.height=h+'px';const b=Math.round(w*d);if(cv.width!==b){cv.width=b;cv.height=Math.round(h*d)}}
 new ResizeObserver(fit).observe(cw);addEventListener('resize',fit);fit();
 if(navigator.maxTouchPoints>0)document.body.classList.add('touch');
+const vm=document.querySelector('meta[name=viewport]'),VC='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover';
+['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+document.addEventListener('touchstart',e=>{if(e.touches.length>1&&!e.target.closest('#map'))e.preventDefault()},{passive:false});
+let lt=0;document.addEventListener('touchend',e=>{const n=Date.now();if(n-lt<350&&!e.target.closest('button,#map'))e.preventDefault();lt=n},{passive:false});
+document.addEventListener('dblclick',e=>e.preventDefault());
+function unzoom(){const v=window.visualViewport;if(v&&v.scale>1.02){vm.setAttribute('content',VC.replace('initial-scale=1,','initial-scale=1.0001,'));setTimeout(()=>{vm.setAttribute('content',VC);fit()},80)}}
+if(window.visualViewport){visualViewport.addEventListener('resize',unzoom);visualViewport.addEventListener('scroll',unzoom)}
 addEventListener('pointerdown',e=>{if(e.pointerType=='touch'&&!document.body.classList.contains('touch')){document.body.classList.add('touch');fit()}});
 let tto;function toast(t,ms){$('tt').textContent=t;clearTimeout(tto);tto=setTimeout(()=>$('tt').textContent='',ms)}
 let hv='';function hud(){const q=cur+'|'+ld+'|'+tot;if(q===hv)return;hv=q;$('lvl').innerHTML='Lv <b>'+(cur+1)+'/'+LV.length+'</b> '+lv.name;$('dth').textContent='☠ '+tot+(ld?' ('+ld+' here)':'');const m=ld>=5;$('skip').classList.toggle('show',m);$('ht').textContent=m?'💡 '+lv.hint:'Arrows/WASD + Space. Every trap has a tell.'}
