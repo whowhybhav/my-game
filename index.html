@@ -1,315 +1,238 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#14121c"><meta name="apple-mobile-web-app-capable" content="yes">
-<title>Devil Calling Hell</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#09090f"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>Not Again!</title>
 <style>
-:root{--bg:#14121c;--ac:#8e7cc3}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
-html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:none;background:var(--bg);color:#eee;font-family:system-ui,sans-serif}
-body{display:grid;height:100dvh;gap:4px;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);grid-template-rows:auto minmax(0,1fr) auto auto;grid-template-columns:1fr 1fr;grid-template-areas:"hud hud" "cv cv" "hint hint" "lp jp"}
-#hud{grid-area:hud;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 10px;padding:4px 10px 0;font-size:13px}
-#hud b{color:var(--ac)}#lvl{flex:1}
-#tt{order:5;flex-basis:100%;text-align:center;color:var(--ac);font-weight:700;min-height:1.3em}
-#cw{grid-area:cv;min-width:0;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center}
-canvas{width:100%;height:auto;max-width:100%;max-height:100%;aspect-ratio:16/9;display:block;border-radius:10px;box-shadow:0 0 22px -4px var(--ac);background:#000}
-@media (max-width:700px){#hud{font-size:12px;padding:3px 6px 0}#hint{font-size:12px;min-height:34px}.pad{min-height:72px;font-size:30px;border-radius:16px}button{padding:7px 10px;font-size:13px}}
-@media (min-width:1100px) and (min-height:700px){#hint{font-size:14px}.pad{min-height:90px}}
-#hint{grid-area:hint;display:flex;gap:8px;align-items:center;justify-content:center;min-height:36px;padding:0 10px;font-size:13px;text-align:center;opacity:.9}
-button{background:#3a3456;color:#fff;border:0;border-radius:10px;padding:7px 12px;font-size:14px;touch-action:manipulation}
-#skip{visibility:hidden;background:#c0392b;white-space:nowrap}#skip.show{visibility:visible}
-#hintBtn{display:none;background:#6b4fb0;white-space:nowrap}#hintBtn.show{display:inline-block}
-#hintPanel{position:fixed;inset:0;z-index:12;display:none;align-items:center;justify-content:center;background:rgba(7,5,12,.88);padding:18px;touch-action:auto}
-#hintPanel.show{display:flex}
-#hintCard{width:min(92vw,560px);max-height:min(78dvh,560px);overflow:auto;background:#211a32;border:2px solid #9b74e8;border-radius:18px;box-shadow:0 0 34px rgba(142,124,195,.42);padding:20px;color:#fff}
-#hintCard h2{margin:0 0 4px;font-size:23px;color:#ffb7c6;text-align:center}
-#hintCard .hs{font-size:12px;text-align:center;opacity:.65;margin-bottom:14px}
-#hintText{font-size:15px;line-height:1.55;white-space:normal}
-#hintClose{display:block;margin:16px auto 0;background:#8e7cc3;min-width:130px}
-#lp,#jp{display:none;padding:0 8px 8px}
-#lp{grid-area:lp;gap:10px}#jp{grid-area:jp}
-body.touch #lp,body.touch #jp{display:flex}
-.pad{flex:1;display:flex;align-items:center;justify-content:center;min-height:80px;font-size:32px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.22);border-radius:20px;touch-action:none}
-.pad.on{background:rgba(255,255,255,.32)}
-@media (orientation:landscape) and (max-height:520px){
-body{grid-template-rows:auto minmax(0,1fr) auto;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"hud hud hud" "lp cv jp" "lp hint jp"}
-#lp{padding:0 0 8px 8px}#jp{padding:0 8px 8px 0}#lp .pad{width:84px;min-height:0}#jp .pad{width:110px;min-height:0}}
-#map{position:fixed;inset:0;z-index:9;display:none;overflow:auto;background:rgba(10,8,16,.97);padding:calc(12px + env(safe-area-inset-top)) 14px calc(20px + env(safe-area-inset-bottom));touch-action:pan-y;overscroll-behavior:contain}
-#map.show{display:block}
-#map h1{margin:0;font-size:26px;text-align:center;letter-spacing:1px;color:#ff6b4a;text-shadow:0 0 14px #ff3b1f}
-.sub{text-align:center;opacity:.7;font-size:13px;margin:4px 0 10px}
-.top{display:flex;gap:10px;justify-content:center;margin-bottom:6px}
-.wh{margin:16px 0 6px;font-weight:700;font-size:14px;letter-spacing:1px}
-.lg{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
-.lb{background:#2a2447;border:2px solid var(--c);border-radius:12px;padding:8px 4px;color:#fff;font-size:17px;min-height:62px;display:flex;flex-direction:column;align-items:center;gap:2px}
-.lb small{font-size:10px;opacity:.75;line-height:1.1}
-.df{padding:10px 14px}.df.on{outline:2px solid #ff6b4a;background:#5a2a3a}
-#map.pick #mlist,#map.pick #mcont,#map.pick #mclose{display:none}
-#map.pick #dfr{margin-top:22px}#map.pick .df{font-size:18px;padding:16px 18px}
-.lb.dn{background:#2f5a3c}.lb.sk{background:#5a4a2a}.lb.cu{box-shadow:0 0 0 3px #fff}.lb:disabled{opacity:.4}
-</style></head><body>
-<div id="hud"><span id="lvl"></span><span id="dth"></span><button id="mapb" aria-label="Open level map">🗺</button><button id="mute" aria-label="Toggle sound">🔊</button><span id="tt"></span></div>
-<div id="cw"><canvas id="c" width="640" height="360"></canvas></div>
-<div id="hint"><span id="ht"></span><button id="hintBtn" aria-label="Reveal Devil hint">💡 Hint</button><button id="skip">Skip ⏭</button></div>
-<div id="lp"><div class="pad" id="pl" data-k="l">◀</div><div class="pad" id="pr" data-k="r">▶</div></div>
-<div id="jp"><div class="pad" data-k="j">⤒</div></div>
-<div id="map"><h1>😈 DEVIL CALLING HELL</h1><div class="sub" id="msub"></div><div class="top" id="dfr"><button class="df" id="ds0">😊 Easy<br><small>Normal</small></button><button class="df" id="ds1">😈 Devil<br><small>Extreme</small></button></div>
-<div class="sub" id="modesub">Easy = normal hazards · Devil = extreme hazards + hunting traps</div><div class="top"><button id="mcont">▶ Continue</button><button id="mclose">✕ Close</button></div><div id="mlist"></div></div><div id="hintPanel" role="dialog" aria-modal="true" aria-labelledby="hintTitle"><div id="hintCard"><h2 id="hintTitle">💡 Devil Hint</h2><div class="hs" id="hintSub">Level solution</div><div id="hintText"></div><button id="hintClose">Got it ✓</button></div></div>
-<script>
-const cv=document.getElementById('c'),x=cv.getContext('2d',{alpha:false}),W=640,H=360,$=id=>document.getElementById(id),cw=$('cw'),pl=$('pl'),pr=$('pr');
-function fit(){const d=Math.min(devicePixelRatio||1,2);let w=Math.max(160,Math.min(cw.clientWidth,cw.clientHeight*16/9)|0);const h=w*9/16|0;cv.style.width=w+'px';cv.style.height=h+'px';const b=Math.round(w*d);if(cv.width!==b){cv.width=b;cv.height=Math.round(h*d)}}
-new ResizeObserver(fit).observe(cw);addEventListener('resize',fit);fit();
-if(navigator.maxTouchPoints>0)document.body.classList.add('touch');
-const vm=document.querySelector('meta[name=viewport]'),VC='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover';
-['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
-document.addEventListener('touchstart',e=>{if(e.touches.length>1&&!e.target.closest('#map'))e.preventDefault()},{passive:false});
-let lt=0;document.addEventListener('touchend',e=>{const n=Date.now();if(n-lt<350&&!e.target.closest('button,#map'))e.preventDefault();lt=n},{passive:false});
-document.addEventListener('dblclick',e=>e.preventDefault());
-function unzoom(){const v=window.visualViewport;if(v&&v.scale>1.02){vm.setAttribute('content',VC.replace('initial-scale=1,','initial-scale=1.0001,'));setTimeout(()=>{vm.setAttribute('content',VC);fit()},80)}}
-if(window.visualViewport){visualViewport.addEventListener('resize',unzoom);visualViewport.addEventListener('scroll',unzoom)}
-addEventListener('pointerdown',e=>{if(e.pointerType=='touch'&&!document.body.classList.contains('touch')){document.body.classList.add('touch');fit()}});
-let tto;function toast(t,ms){$('tt').textContent=t;clearTimeout(tto);tto=setTimeout(()=>$('tt').textContent='',ms)}
-let hv='';function hud(){const unlocked=diff===1&&attempts[cur]>=5;const q=cur+'|'+ld+'|'+tot+'|'+diff+'|'+(attempts[cur]||0)+'|'+unlocked;if(q===hv)return;hv=q;$('lvl').innerHTML=['😊','😈'][diff]+' <b>'+(['EASY','DEVIL'][diff])+'</b> · Lv <b>'+(cur+1)+'/'+LV.length+'</b> '+lv.name;$('dth').textContent='☠ '+tot+(ld?' ('+ld+' here)':'');const m=diff===1?unlocked:ld>=3;$('skip').classList.toggle('show',m);$('hintBtn').classList.toggle('show',unlocked);$('ht').textContent=unlocked?'💡 A secret hint is unlocked for this level. Tap Hint to reveal it.':(m&&diff===0?'💡 '+lv.hint:'Arrows/WASD + Space. Every trap has a tell.')}
-const G=(a,w)=>({x:a,y:320,w,h:40});
-// A hunter is a trap that wakes up when you get close, then actively pursues you.
-const HN=(a,y,t,side='right',h=56)=>({x:a,y,w:24,h,trig:t,side,home:a,armed:0,v:0,phase:0});
-const EX=(a,f)=>({x:a,y:280,w:24,h:40,fake:f});
-const D=(a,o)=>({x:a,w:28,y:0,h:26,vy:0,odd:o,td:o?70+Math.random()*130:150,dl:o?Math.random()*35|0:0});
-const HG=(a,w,t)=>({x:a,y:320,w,h:40,trig:t,hid:1});
-const TH=[{n:'Dungeon',sp:'#e8e8f0',sw:'#d0d0d8',bg:'#1d1a2b',g:'#3a3456',t:'#5b5388',a:'#8e7cc3'},{n:'Neon',sp:'#c9d4ff',sw:'#9bb0ff',bg:'#0f1030',g:'#26307a',t:'#5b7bff',a:'#b06bff'},{n:'Night cave',sp:'#d5ede0',sw:'#a8d8c0',bg:'#101c26',g:'#2f4a3f',t:'#4f8f6f',a:'#7ea6ff'},{n:'Ice',sp:'#ffffff',sw:'#bfe6ff',bg:'#122536',g:'#5c8db3',t:'#cfeeff',a:'#ffffff',dy:1},{n:'Lava',sp:'#ffd9b0',sw:'#ffb070',bg:'#2a0f0f',g:'#5a2a22',t:'#d9542b',a:'#ff9a3c',dy:-1},{n:'Void',sp:'#ffd0f5',sw:'#e0a0ff',bg:'#0a0a14',g:'#2a2447',t:'#ff4fd8',a:'#ffffff'}];
-const thI=i=>i<6?0:i<9?1:i<13?2:i<25?3:i<37?4:5;
-const LV=[
-()=>({name:'Warm-up',hint:'Solid ground is a suggestion. Jump before trouble.',solids:[G(0,220),HG(220,80,150),G(300,160),HG(460,60,390),G(520,120)],spikes:[],exits:[EX(590)]}),
-()=>({name:'Poke',hint:'That tiny tip grows, then hunts you. Jump it, keep moving.',solids:[G(0,640)],spikes:[{x:300,y:320,w:30,sh:5,trig:230,up:0,ch:1}],exits:[EX(590)]}),
-()=>({name:'Ambush',hint:'The spikes wake in sequence. In Devil, the hunting gate is fast — but you can outrun it. Jump, keep moving, and never hesitate.',solids:[G(0,640)],spikes:[{x:180,y:320,w:30,sh:5,trig:250,up:0,ch:1},{x:400,y:320,w:30,sh:5,trig:360,up:0,ch:1}],hunters:[Object.assign(HN(620,264,310),{maxV:2.75,grace:30})],exits:[EX(590)]}),
-()=>({name:'Runaway door',hint:'Dashed door is shy. It hops away, then runs home. In Devil, the door hunts you — but it cannot outrun you.',solids:[G(0,640),{x:520,y:250,w:110,h:12}],spikes:[],hunters:[Object.assign(HN(590,264,135),{maxV:2.25,grace:55})],exits:[{x:420,y:280,w:24,h:40,dg:[{x:575,y:210,near:70},{x:40,y:280,near:55}]}]}),
-()=>({name:'Twin doors',hint:'Both look green. Only the real one has a knob. In Devil, both doors wake up — but both can be outrun.',solids:[G(0,640)],spikes:[],hunters:[Object.assign(HN(615,265,285),{maxV:2.55,grace:35}),Object.assign(HN(520,265,455,'left',42),{maxV:2.35,grace:28})],exits:[EX(300,1),EX(590)]}),
-()=>({name:'Everything',hint:'Ground vanishes, a spike hunts, the pink one drops at random. Devil adds a hunter after you clear the first danger.',solids:[G(0,170),HG(170,70,100),G(240,400)],spikes:[{x:330,y:320,w:30,sh:5,trig:270,up:0,ch:1}],drops:[D(500,1)],hunters:[Object.assign(HN(620,264,355),{maxV:2.35,grace:45})],exits:[EX(600)]}),
-()=>({name:'Wrong way',hint:'Between the glowing pillars left and right swap. Cross, then jump the pit.',solids:[G(0,420),G(470,170)],spikes:[],zones:[{x:150,w:130}],exits:[EX(590)]}),
-()=>{const a=2+(Math.random()*2|0),b=Math.min(5,a+2+(Math.random()*2|0)),s=[];for(let i=0;i<7;i++){const t={x:i*100,y:320,w:i<6?100:40,h:40};if(i==a||i==b){t.trig=t.x-100;t.hid=1}s.push(t)}return{name:'Trust issues',hint:'Two floor tiles vanish, never the same ones. Stay light.',solids:s,spikes:[],exits:[EX(600)]}},
-()=>({name:'Panic',hint:'Red wall behind you. Cross the portal without stopping.',solids:[G(0,420),G(470,170)],spikes:[],zones:[{x:150,w:90}],chase:{x:-170,v:1.8},exits:[EX(590)]}),
-()=>({name:'Stalactites',hint:'Two drop on schedule. The pinkish one has its own mind.',solids:[G(0,640)],spikes:[],drops:[D(220),D(400),D(480,1)],exits:[EX(590)]}),
-()=>({name:'Sawmill',hint:'Learn each saw rhythm, then jump between passes. Devil sends a gate after you.',solids:[G(0,640)],spikes:[],saws:[{x:200,y:306,r:14,v:2.4,min:170,max:330},{x:450,y:306,r:14,v:-3,min:380,max:540}],hunters:[Object.assign(HN(620,270,350),{maxV:2.45,grace:35})],exits:[EX(590)]}),
-()=>({name:'Night shift',hint:'Blue bats swoop in waves. The pink one dives at you.',solids:[G(0,640)],spikes:[],bats:[{x:700,by:262,amp:40,ph:0,vx:-2.2},{x:900,by:262,amp:40,ph:2,vx:-2.2},{x:1100,by:205,amp:20,ph:4,vx:-2.6,dive:1}],hunters:[Object.assign(HN(620,265,230),{maxV:2.35,grace:35})],exits:[EX(590)]}),
-()=>({name:'Loaded dice',hint:'Two spikes on schedule, one random, and a bat is watching.',solids:[G(0,640)],spikes:[],drops:[D(200),D(320),D(440,1)],bats:[{x:900,by:225,amp:20,ph:1,vx:-2.4,dive:1}],exits:[EX(600)]}),
-()=>({name:'Slip and slide',hint:'Ice keeps you sliding. Let go early before edges and spikes.',ice:1,solids:[G(0,250),G(320,130),G(510,130)],spikes:[{x:140,y:320,w:30,sh:24,up:1},{x:380,y:320,w:30,sh:24,up:1}],exits:[EX(600)]}),
-()=>({name:'Cold rain',hint:'Icicles fall while you slide. The pink one lies.',ice:1,solids:[G(0,640)],spikes:[],drops:[D(180),D(320),D(450,1)],exits:[EX(600)]}),
-()=>({name:'Rising lava',hint:'Do not stop. Climb before the floor melts.',lava:{y:350,v:.3},solids:[G(0,130),{x:160,y:285,w:70,h:12},{x:270,y:250,w:70,h:12},{x:380,y:215,w:70,h:12},{x:490,y:180,w:140,h:12}],spikes:[],exits:[{x:580,y:140,w:24,h:40}]}),
-()=>({name:'Magma run',hint:'Climb faster. A bat guards the top.',lava:{y:350,v:.36},solids:[G(0,110),{x:140,y:290,w:60,h:12},{x:250,y:255,w:60,h:12},{x:360,y:220,w:60,h:12},{x:470,y:185,w:60,h:12},{x:570,y:150,w:70,h:12}],spikes:[],bats:[{x:900,by:150,amp:25,ph:1,vx:-2.6,dive:1}],exits:[{x:600,y:110,w:24,h:40}]}),
-()=>({name:'Upside down',hint:'Cyan lifts you to the ceiling. Watch the saw up there.',solids:[G(0,640),{x:0,y:0,w:640,h:28}],spikes:[{x:300,y:320,w:30,sh:24,up:1}],gz:[{x:190,w:230}],saws:[{x:260,y:46,r:14,v:2.2,min:210,max:400}],exits:[EX(590)]}),
-()=>({name:'Devil playground',hint:'Everything at once. Breathe, then go step by step. This final test uses the full original hazard mix.',solids:[G(0,190),HG(190,60,130),G(250,140),HG(390,60,330),G(450,190)],spikes:[],zones:[{x:30,w:90}],saws:[{x:270,y:306,r:14,v:2.2,min:255,max:375}],drops:[D(530,1)],bats:[{x:1000,by:210,amp:20,ph:2,vx:-2.6,dive:1}],exits:[EX(600)]})
-];
-const B=(x,w,y)=>{y=y||320;return{x,y,w,h:400-y}},CE={x:0,y:0,w:640,h:28},PL=(a,y,w)=>({x:a,y,w,h:12}),CP=(a,y,w)=>({x:a,y,w,h:12,trig:a+w-10,hid:1}),HC=(a,w,t)=>({x:a,y:0,w,h:28,trig:t,hid:1}),EY=(a,y)=>({x:a,y:y-40,w:24,h:40}),
-S=(a,c,y)=>({x:a,y:y||(c?28:320),w:30,sh:24,up:1,c}),SW=(a,y,v,n,m)=>({x:a,y,r:14,v,min:n,max:m}),BT=(a,b,m,p,v,d)=>({x:a,by:b,amp:m,ph:p,vx:v,dive:d});
-const OLD=LV.splice(13);
-const ICE=[
-()=>({name:'Stepping ice',hint:'Small steps up. Ice keeps you sliding, so plan each landing.',ice:1,solids:[B(0,140),B(170,110,290),B(310,110,260),B(450,190,230)],spikes:[],exits:[EY(600,230)]}),
-OLD[0],
-()=>({name:'Downhill',hint:'Drop down the steps. Spikes wait on the ledges. Devil gates move when you approach them from behind.',ice:1,sy:210,solids:[B(0,190,230),B(220,120,260),B(370,120,290),B(520,120)],spikes:[S(290,0,260),S(440,0,290)],hunters:[Object.assign(HN(600,230,325,'left',52),{maxV:2.25,grace:40})],exits:[EX(590)]}),
-OLD[1],
-()=>({name:'Snowbats',hint:'Bats swoop over the ice. The pink one dives.',ice:1,solids:[B(0,300),B(370,270)],spikes:[],bats:[BT(700,262,40,0,-2.2),BT(900,262,40,2,-2.2),BT(1100,205,20,4,-2.6,1)],exits:[EX(600)]}),
-()=>({name:'Sliding saws',hint:'You slide, they patrol. Commit early.',ice:1,solids:[B(0,200),B(270,150),B(490,150)],spikes:[],saws:[SW(300,306,2,285,405),SW(520,306,-2.4,505,565)],exits:[EX(605)]}),
-()=>({name:'Thin ice',hint:'The ice breaks under you, again and again.',ice:1,solids:[B(0,190),HG(190,70,120),B(260,100),HG(360,70,290),B(430,100),HG(530,50,460),B(580,60)],spikes:[],exits:[EX(605)]}),
-()=>({name:'Icicle alley',hint:'Four icicles, one is a liar.',ice:1,solids:[B(0,180),B(250,130),B(450,190)],spikes:[],drops:[D(120),D(300,1),D(430),D(520)],exits:[EX(600)]}),
-()=>({name:'Cold portals',hint:'Swapped controls on ice. Ease off between the pillars.',ice:1,solids:[B(0,450),B(500,140)],spikes:[S(370)],zones:[{x:140,w:80}],exits:[EX(600)]}),
-()=>({name:'Frozen chase',hint:'The wall gains when you slide. Keep pushing. The red wall is already enough pressure — Devil turns it into a pure escape test.',ice:1,solids:[B(0,260),B(330,120),B(520,120)],spikes:[S(190)],chase:{x:-150,v:1.9},exits:[EX(600)]}),
-()=>({name:'Glacier climb',hint:'Climb the steps. The floor below bites.',ice:1,solids:[G(0,640),PL(150,285,80),PL(270,250,80),PL(390,215,80),PL(510,180,120)],spikes:[S(300),S(420)],exits:[EY(590,180)]}),
-()=>({name:'Ice fortress',hint:'Everything at once, on ice.',ice:1,solids:[B(0,200),B(270,140),B(480,160)],spikes:[],drops:[D(100),D(330,1)],saws:[SW(300,306,2,285,395)],bats:[BT(900,215,20,1,-2.4,1)],exits:[EX(600)]})];
-const LAVA=[OLD[2],
-()=>({name:'Molten ladder',hint:'Steeper steps. Keep climbing.',lava:{y:350,v:.34},solids:[G(0,110),PL(130,285,60),PL(230,235,60),PL(330,185,60),PL(430,140,60),PL(530,110,100)],spikes:[],exits:[EY(580,110)]}),
-()=>({name:'Crumble ladder',hint:'Each step crumbles as you leave it. No going back.',lava:{y:350,v:.28},solids:[G(0,110),CP(130,285,70),CP(230,240,70),CP(330,195,70),CP(430,150,70),PL(530,115,110)],spikes:[],exits:[EY(590,115)]}),
-OLD[3],
-()=>({name:'Ember rain',hint:'Spikes fall on the climb. The pink one lies.',lava:{y:350,v:.3},solids:[G(0,110),PL(140,290,70),PL(250,250,70),PL(360,210,70),PL(470,170,70),PL(570,130,70)],spikes:[],drops:[D(220),D(340,1),D(450)],exits:[EY(600,130)]}),
-()=>({name:'Magma saws',hint:'Saws patrol every ledge. Jump between passes.',lava:{y:350,v:.28},solids:[G(0,110),PL(120,285,130),PL(280,235,130),PL(440,185,150)],spikes:[],saws:[SW(150,271,1.6,135,235),SW(310,221,-1.6,295,395),SW(470,171,1.8,455,575)],exits:[EY(600,185)]}),
-()=>({name:'Swapped heat',hint:'The floor stays low, but the lava rises fast. In the purple zone your controls reverse — press LEFT to run right through it.',lava:{y:350,v:.18},zones:[{x:230,w:90}],solids:[G(0,640)],spikes:[],exits:[EX(590)]}),
-()=>({name:'Lava chase',hint:'Wall behind, lava below. Only up and right. Devil makes the existing wall faster instead of adding a second pursuer.',lava:{y:350,v:.24},chase:{x:-150,v:1.7},solids:[G(0,110),PL(140,290,80),PL(260,250,80),PL(380,210,80),PL(500,170,120)],spikes:[],exits:[EY(590,170)]}),
-()=>({name:'Ceiling walk',hint:'Walk the ceiling above the rising lava. Stay in the cyan.',lava:{y:400,v:.25},solids:[G(0,640),CE],spikes:[],gz:[{x:120,w:300}],saws:[SW(300,46,2.2,150,400)],exits:[EX(590)]}),
-()=>({name:'Lava hopscotch',hint:'Up, up, down, up. Not a straight climb.',lava:{y:350,v:.3},solids:[G(0,100),PL(120,285,60),PL(215,240,60),PL(315,200,60),PL(415,245,60),PL(515,205,60),PL(585,150,55)],spikes:[],exits:[EY(605,150)]}),
-()=>({name:'Inferno',hint:'Crumbling steps, a bat, and a random drop.',lava:{y:350,v:.3},solids:[G(0,110),CP(130,285,70),CP(230,245,70),CP(330,205,70),CP(430,165,70),PL(530,130,110)],spikes:[],bats:[BT(900,180,30,1,-2.6,1)],drops:[D(280,1)],exits:[EY(590,130)]}),
-()=>({name:'Lava sprint',hint:'Fast lava, short climb. Go go go.',lava:{y:350,v:.42},solids:[G(0,100),PL(120,270,60),PL(210,220,60),PL(300,170,60),PL(390,130,200)],spikes:[],exits:[EY(560,130)]})];
-const VOID=[OLD[4],
-()=>({name:'Ceiling spikes',hint:'Walk the ceiling and hop the hanging spikes.',solids:[G(0,640),CE],spikes:[S(250,1),S(350,1)],gz:[{x:170,w:300}],exits:[EX(590)]}),
-()=>({name:'Ceiling saws',hint:'Two saws patrol the ceiling. Jump down and back.',solids:[G(0,640),CE],spikes:[],gz:[{x:100,w:440}],saws:[SW(200,46,2.4,150,300),SW(400,46,-2.8,330,490)],exits:[EX(590)]}),
-()=>({name:'Pit float',hint:'Stay inside the cyan over the pit. Leave it and you fall.',solids:[G(0,190),CE,G(430,210)],spikes:[],gz:[{x:190,w:240}],saws:[SW(300,46,2.2,220,400)],exits:[EX(600)]}),
-()=>({name:'Blink zones',hint:'Short gravity bursts. Ceiling spikes wait in each one.',solids:[G(0,640),CE],spikes:[S(150,1),S(310,1),S(470,1),S(400)],gz:[{x:110,w:90},{x:270,w:90},{x:430,w:90}],exits:[EX(600)]}),
-()=>({name:'Gravity bats',hint:'Bats cross the middle. The ceiling is safer, mostly.',solids:[G(0,640),CE],spikes:[],gz:[{x:150,w:300}],bats:[BT(800,150,60,0,-2.2),BT(1000,100,40,2,-2.4,1)],exits:[EX(590)]}),
-()=>({name:'Sky holes',hint:'Ceiling tiles vanish. Fall up and you are gone. Jump across.',solids:[G(0,640),{x:0,y:0,w:200,h:28},HC(200,70,150),{x:270,y:0,w:150,h:28},HC(420,70,370),{x:490,y:0,w:150,h:28}],spikes:[],gz:[{x:120,w:440}],exits:[EX(600)]}),
-()=>({name:'Pillars',hint:'Pillars block the ceiling. Jump down and slip under them.',solids:[G(0,640),CE,{x:230,y:0,w:36,h:95},{x:360,y:0,w:36,h:95}],spikes:[],gz:[{x:150,w:300}],exits:[EX(590)]}),
-()=>({name:'Ice ceiling',hint:'Sliding on the ceiling. Let go early.',ice:1,solids:[G(0,640),CE],spikes:[S(240,1),S(330,1),S(500)],gz:[{x:150,w:260}],exits:[EX(600)]}),
-()=>({name:'Swapped sky',hint:'Swapped controls, upside down. Breathe.',solids:[G(0,640),CE],spikes:[S(330,1)],gz:[{x:160,w:260}],zones:[{x:240,w:100}],saws:[SW(200,46,2,170,270)],exits:[EX(600)]}),
-()=>({name:'Gravity chase',hint:'The red wall chases you across the ceiling. Devil adds a ceiling hunter from behind.',solids:[G(0,640),CE],spikes:[S(260,1),S(340,1)],gz:[{x:150,w:260}],chase:{x:-160,v:1.9},hunters:[Object.assign(HN(610,45,295,'left',48),{maxV:2.35,grace:38})],exits:[EX(600)]}),
-()=>({name:'Black hole',hint:'Float over the pit, dodge the saw and the diving bat.',solids:[G(0,220),CE,G(430,210)],spikes:[],gz:[{x:220,w:210}],saws:[SW(300,46,2.4,240,400)],bats:[BT(900,120,40,1,-2.6,1)],exits:[EX(600)]}),
-OLD[5]];
-LV.push(...ICE,...LAVA,...VOID);
-const NAMES=LV.map(f=>f().name);
-const DEVIL_HINTS=["Run right and jump the two broken-floor gaps. Land cleanly on each next platform; the exit is the green door on the far right.","Sprint toward the spike, then jump as soon as its tip starts growing. Do not stop after landing; keep moving right until the exit.","Keep a steady run. Jump the first spike, keep running while the gate chases from behind, then jump the second spike and take the exit.","Approach the dashed door to make it move, then follow its new position. Keep moving right when it wakes and jumps away; jump as needed to stay ahead of the hunting door.","Ignore the fake green door at the left. Stay moving right, use small jumps to evade the two awakened doors, and enter the real exit at the far right.","Cross the disappearing floors one jump at a time. Jump the spike, watch the falling pink hazard, and keep moving so the awakened gate cannot catch you before the right exit.","Enter the purple swap zone, then remember the controls reverse. While inside, press LEFT to keep moving right. Jump the pit immediately after the swap and continue to the exit.","Do not trust the floor. Two tiles vanish after you approach them. Keep your speed up and jump across the missing sections instead of committing to a disappearing tile.","Use the control-swap zone to cross the gap: inside purple, your LEFT input moves you right. Keep moving because the red wall is chasing from behind, then jump onto the right platform.","Keep running under the falling hazards. Learn the warning position of each stalactite, then make short jumps past x≈220, 400 and 480 while continuing toward the exit.","Watch the saws' patrol ranges and jump over them on their return passes. Keep moving right while the Devil gate closes in from behind; do not get trapped between a saw and the exit.","Stay low when the normal bats pass, then jump when the pink bat dives. Keep moving right so the awakened gate remains behind you; use short jumps rather than stopping.","Watch the ceiling for the falling spikes. Trigger each drop while still moving, then slip past it before the next one. Keep the right side clear for the exit.","Ice means momentum. Start braking early before the first spike, jump the gap, then use the same rhythm for the second spike and land on the final platform without over-sliding.","Stay on the ice and watch the ceiling tells. Keep moving right, jump each falling icicle after it starts, and avoid long stops because the ice carries you farther than expected.","Climb the ledges as quickly as possible. Jump from one rising platform to the next; the lava only gives you a small timing window, so commit to each jump early.","Take the steps upward without hesitating. The top platform is the goal; after the last jump, avoid the diving bat and move straight into the upper-right exit.","Enter the cyan gravity field to get pulled onto the ceiling. Stay on the ceiling while crossing the field, dodge the saw with a jump down, then return to the exit route.","This is the full mixed test. Handle the control-swap zone first, clear the disappearing floors, jump the saw, dodge the falling pink hazard and keep moving to the right exit.","Climb the ice steps with small controlled inputs. Because you slide, release RIGHT before each landing so momentum does not carry you off the next ledge.","Let yourself slide downhill, but jump each spike before your momentum carries you into it. Keep advancing; the hunting gate is defeated by continuous forward movement, not stopping.","Stay on the ice while the bats sweep over you. Use short jumps for the diving pink bat, then continue right instead of waiting for every hazard to pass.","Commit to each slide early. Use the safe spaces between the two saw patrols, jump over a saw only when it enters your lane, and keep the final platform in sight.","Treat every broken section as temporary. Jump before the ice tile disappears, land on the next solid section, and immediately prepare for the following gap.","Four icicles are spaced across the route. Move under each warning point, then jump once the spike starts dropping. The pink one is the unpredictable one, so give it extra space.","Inside the purple field the controls reverse. Enter with room to spare, use LEFT to continue right, and do not overcorrect on the slippery ice. Exit the zone before the spike.","Keep pushing right. The red wall is close, the ice increases drift, and the spike blocks the lower route. Brake before the spike, jump it, then accelerate again.","Use small jumps up the glacier steps. Clear the first spike before landing on the next ledge, then repeat; do not let the lava-like floor pressure make you rush a bad jump.","Handle the hazards in order: falling spike, ice footing, saw, then diving bat. Keep every movement deliberate and use the wide platforms to reset your footing.","Jump from ledge to ledge while the lava rises. The ladder is steep, so release RIGHT early near each platform to avoid sliding or overshooting the next step.","Never plan to go backward. Each crumbling step disappears after you leave it, so jump forward in a single sequence and land safely on the final solid platform.","Keep climbing while dodging the falling embers. Each drop gives you a warning; trigger it while moving, then jump through the gap and continue upward.","There is a saw on every section. Time your jumps so the saw is moving away from your landing point, then immediately commit to the next platform before the lava rises.","In the purple zone, LEFT makes you run right. Enter while centered, hold the corrected direction through the swap, and keep moving until you are past the zone.","This is a straight escape. Climb the platforms immediately while the red wall advances behind you. Do not backtrack and do not stop on a ledge.","Use the cyan field to flip onto the ceiling, cross above the lava, and avoid the ceiling saw. After clearing the field, return to the ground route and take the exit.","Treat the platforms like hopscotch: jump right, land, jump right, then make the higher final jump. Do not assume every next platform is higher; follow the exact staircase pattern.","The steps crumble, the lava rises, the bat dives and the pink drop falls. Keep a fixed rhythm: jump forward, land, jump again; never turn back for a missed platform.","This is a pure speed climb. Start moving immediately, chain the jumps with minimal hesitation, and use the large final platform to make the exit safely above the lava.","Enter the cyan zone and flip to the ceiling. Jump away from the hanging spikes when they line up with you, then keep moving across the ceiling until gravity returns.","The saws patrol the ceiling. Flip up, watch their motion, then jump down to the ground when a saw blocks your lane and jump back up after it passes.","Use the cyan field to float across the pit. Stay inside it so gravity keeps you on the ceiling, dodge the ceiling saw, then leave the field only after you are over solid ground.","The cyan fields are short gravity bursts. Enter each one, flip, immediately dodge the hanging spike with a small jump, then continue to the next zone before falling.","The ceiling is useful here. Flip up in the cyan field to avoid the middle bats, then make a small jump when the diving pink bat crosses your lane and continue right.","The ceiling has holes. Use the cyan field when it helps, but drop to the floor before each missing ceiling section, then flip back up after the gap is behind you.","Two ceiling pillars block the upper route. Flip to the ceiling, then drop to the ground before the first pillar, stay low under it, and repeat for the second before flipping back up.","Ice makes the ceiling slippery too. Flip up in the cyan zone, brake early before each hanging spike, and use short downward jumps to recover when momentum gets too high.","This combines upside-down movement and swapped controls. Enter the cyan field, remember LEFT still moves you right only inside the purple zone, and use a small jump to clear the ceiling spike.","Keep moving while the red wall follows. Flip to the ceiling, jump away from the hanging spikes as the hunter gets close, then keep running right until the exit.","Float across the black-hole pit inside the cyan zone. Dodge the ceiling saw first, then the diving bat, and do not leave the gravity field until you are safely over the far platform."];
-const DS=[0,1].map(()=>({c:0,t:0,u:0,s:new Array(LV.length).fill(0),a:new Array(LV.length).fill(0)})),CY=[12,5];
-let st=DS[1].s,u=0,paused=false;
-let lv,P,cur=0,tot=0,ld=0,parts=[],k={},done=false,fx=0,frame=0,T,swp=false,jb=0,cy=0,mute=false,ph=0,pt=0,we=null,DM=1,diff=0,danger=0,storyShown=0,attempts=[],hintOpen=false;
-function applyDiff(){
- const d=diff,m=DM;
- lv.saws=lv.saws.filter((_,i)=>d>0||i%2==0);
- lv.saws.forEach(o=>o.v*=m);
- lv.bats=lv.bats.filter(b=>d>0||!b.dive);
- lv.bats.forEach(b=>b.vx*=m);
- if(lv.chase)lv.chase.v*=m;
- if(lv.lava)lv.lava.v*=(d?1.2:.85);
- lv.drops.forEach(o=>{if(d==0){o.odd=0;o.td=150;o.dl=0}else{o.td=105+Math.random()*70;o.dl=(Math.random()*14)|0}});
- lv.zones.forEach(z=>z.w*=(d?.76:1.05));
- lv.solids.forEach(o=>{if(o.trig!=null&&o.h!=12)o.trig+=d?32:-18});
- lv.hunters.forEach(o=>{o.off=d==0?1:0;o.trig=Math.max(40,o.trig-(d?0:10));o.maxV=o.maxV||2.5;o.v=0;o.armed=0;o.phase=0});
+:root{--bg:#09090f;--card:#14121c;--bd:rgba(255,255,255,.08);--tx:#f4f2fa;--mut:#8a86a0;--pk:#ff4d6d;--vi:#8b5cf6;--mint:#2ee6a6;--sun:#ffd166}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;touch-action:none;overscroll-behavior:none}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(640px 380px at 50% -90px,rgba(139,92,246,.24),transparent),radial-gradient(520px 320px at 90% 105%,rgba(255,77,109,.1),transparent)}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+
+/* Device Rotation Prompt */
+#rotate-msg { display: none; position: fixed; inset: 0; z-index: 999; background: var(--bg); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+#rotate-msg h2 { color: var(--pk); margin-top: 20px; margin-bottom: 10px; font-size: 28px; }
+#rotate-msg p { color: var(--mut); font-size: 16px; }
+@media (orientation: portrait) and (max-width: 900px) {
+  body.touch #rotate-msg { display: flex; }
+  body.touch .scr { display: none !important; }
 }
 
-function reset(){$('hintPanel').classList.remove('show');hintOpen=false;lv=LV[cur]();for(const n of['zones','gz','drops','saws','bats','hunters'])lv[n]=lv[n]||[];jb=0;cy=0;hv='';ph=0;danger=0;DM=diff?1.35:.85;T=TH[thI(cur)];document.documentElement.style.setProperty('--ac',T.a);document.documentElement.style.background=document.body.style.background=T.bg;P={x:30,y:lv.sy||290,w:20,h:20,vx:0,vy:0,on:false};applyDiff();storyShown=0;hud()}
-function load(i){cur=i;ld=0;reset();if(!i||thI(i)!=thI(i-1))toast(T.n.toUpperCase()+' WORLD',2200);save()}
-let ac;function beep(f,d,t='square',v=.05){if(mute||!ac)return;try{const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.stop(ac.currentTime+d)}catch(e){}}
-function burst(px,py,c,n){for(let i=0;i<n;i++)parts.push({x:px,y:py,vx:(Math.random()-.5)*8,vy:(Math.random()-.9)*7,l:40,c})}
-function die(){if(ph)return;ph='die';pt=0;tot++;ld++;attempts[cur]=(attempts[cur]||0)+1;burst(P.x+10,P.y+10,'#ff5c7a',16);beep(180,.25,'sawtooth',.08);if(diff===1&&attempts[cur]===5)toast('💡 HINT UNLOCKED — 5 attempts reached!',2400);save();hud()}
-function win(e){if(ph)return;ph='win';pt=0;we=e;burst(e.x+12,e.y+20,'#ffd166',30);beep(660,.1);setTimeout(()=>beep(880,.1),110);setTimeout(()=>beep(1180,.25),230)}
-function finish(){mark(cur,1);ph=0;if(cur==LV.length-1){done=true;save()}else{const w=thI(cur+1)!=thI(cur);load(cur+1);toast('🎉 Promoted to Level '+(cur+1)+'!'+(w?' · '+T.n.toUpperCase()+' WORLD':''),2800)}}
-function anim(){pt++;
- if(ph=='die'){if(pt==14){P.vy=-9.5;beep(520,.12,'square',.06)}else if(pt>14){P.vy+=.55;P.y+=P.vy;if(pt==32)beep(330,.12,'square',.05);if(pt==46)beep(220,.15,'square',.05)}if(P.y>H+60||pt>110){ph=0;reset()}}
- else{const ex=we.x+we.w/2-10,ey=we.y+we.h/2-10;P.x+=(ex-P.x)*.18;P.y+=(ey-P.y)*.18;if(pt%3==0)burst(we.x+12,we.y+20,pt%2?'#ffd166':'#7dffb0',3);if(pt>=48)finish()}}
-function story(){
- const beats={4:'A distant laugh echoes through the cave. Something is watching.',10:'You see a tiny figure behind the next gate — then the darkness takes her.',20:'Lumi: “Keep moving. Do not trust the doors.”',30:'The Devil is no longer hiding. The exit is close.',40:'The final door opens only for someone who refused to turn back.'};
- const n=cur+1;if(diff==1&&beats[n]&&storyShown!==n){storyShown=n;toast('👁 '+beats[n],3200);beep(520,.08,'triangle',.035);setTimeout(()=>beep(740,.12,'sine',.025),90)}
-}
-function tick(){if(ph)anim();else step();if(!ph)story()}
-function drawP(){if(ph=='win'){x.fillStyle='rgba(255,230,120,'+(.5*(1-pt/48))+')';x.beginPath();x.arc(we.x+12,we.y+20,16+pt*1.1,0,7);x.fill()}
- x.save();x.translate(P.x+10,P.y+10);
- if(ph=='win'){const q=pt/48;x.rotate(q*14);x.scale(1-q*.85,1-q*.85)}else if(ph=='die'&&pt>14)x.rotate(Math.sin(pt/3)*.35);
- if(P.gv<0)x.scale(1,-1);
- x.fillStyle=ph=='die'?'#ff9a9a':P.zr?'#c9a0ff':'#ffb347';x.fillRect(-10,-10,20,20);
- x.fillStyle='#e74c3c';x.fillRect(-8,-14,4,4);x.fillRect(4,-14,4,4);x.fillStyle='#222';
- if(ph=='die'){x.strokeStyle='#222';x.lineWidth=2;x.beginPath();x.moveTo(-7,-5);x.lineTo(-2,0);x.moveTo(-2,-5);x.lineTo(-7,0);x.moveTo(2,-5);x.lineTo(7,0);x.moveTo(7,-5);x.lineTo(2,0);x.stroke();x.fillRect(-4,5,8,3)}
- else{x.fillRect(-6,-5,4,4);x.fillRect(2,-5,4,4)}
- x.restore()}
-$('skip').onclick=()=>{mark(cur,2);if(cur<LV.length-1)load(cur+1);else done=true};
-const hit=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+.scr{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;padding:max(18px,env(safe-area-inset-top)) 18px max(22px,env(safe-area-inset-bottom));overflow:auto;touch-action:pan-y}
+.scr.on{display:flex}
+.bar{width:min(560px,100%);display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--vi);font-weight:700}
+.pill{border:1px solid var(--bd);background:var(--card);border-radius:12px;padding:9px 14px;font-size:13px;margin-left:6px}
+.card{width:min(560px,100%);background:var(--card);border:1px solid var(--bd);border-radius:28px;padding:30px 22px 24px;text-align:center;box-shadow:0 30px 60px -40px #000}
+.mx{width:50px;height:50px;border-radius:16px;background:var(--sun);position:relative;margin:0 auto 18px;box-shadow:0 0 36px -6px rgba(255,209,102,.55);animation:mx 7s infinite}
+.mx:before{content:"absolute";left:13px;top:19px;width:6px;height:10px;border-radius:3px;background:#1b1830;box-shadow:18px 0 0 #1b1830}
+@keyframes mx{0%,70%{transform:none;opacity:1}76%{transform:translateY(80px) rotate(40deg);opacity:0}77%{transform:translateY(-30px);opacity:0}90%,100%{transform:none;opacity:1}}
+h1{font-weight:800;font-size:clamp(44px,12vw,74px);line-height:1;letter-spacing:-2.5px;margin:0}
+h1 i{color:var(--pk);font-style:normal}
+.sub{color:var(--mut);margin:12px 0 24px;font-size:16px}
+.btn{border:0;border-radius:16px;background:var(--pk);color:#fff;font-weight:700;font-size:16px;letter-spacing:.04em;padding:15px 44px;box-shadow:0 14px 34px -12px rgba(255,77,109,.75);transition:transform .15s}
+.btn:active{transform:scale(.96)}
+.btn.ghost{background:none;color:var(--mut);box-shadow:none;font-size:14px;padding:11px 14px}
+.fn{margin-top:16px;font-size:12px;color:#5f5b75}
+#wl{width:min(560px,100%)}
+.wc{width:100%;display:block;text-align:left;background:var(--card);border:1px solid var(--bd);border-radius:22px;padding:18px 20px;margin-top:12px;transition:transform .15s,border-color .15s}
+.wc:active:not(:disabled){transform:scale(.99)}.wc:not(:disabled):hover{border-color:rgba(255,255,255,.16)}
+.wc:disabled{opacity:.45}
+.wh{display:flex;align-items:baseline;gap:10px}.wh b{font-size:19px;flex:1}
+.wl{font-size:11px;letter-spacing:.18em;font-weight:700}.wp{color:var(--mut);font-size:13px}
+.wc small{display:block;color:var(--mut);margin-top:6px;font-size:14px}
+.ch{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.ch span{border:1px solid var(--bd);border-radius:999px;padding:5px 10px;font-size:12px;color:#cfcbe0}
+.pg{height:4px;background:rgba(255,255,255,.07);border-radius:4px;margin-top:14px;overflow:hidden}.pg i{display:block;height:100%;background:var(--mint)}
+.top{width:min(560px,100%);display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.top h2{margin:0;font-size:18px}
+.ic{width:42px;height:42px;border-radius:14px;border:1px solid var(--bd);background:var(--card);font-size:18px}
+.lg{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;width:min(560px,100%);margin-top:24px}
+.lb{aspect-ratio:1;border-radius:16px;border:1px solid var(--bd);background:var(--card);font-weight:700;font-size:20px}
+.lb.dn{border-color:var(--mint);color:var(--mint)}.lb:disabled{opacity:.3}
+
+/* Fix: added width:100% and height:100% */
+#gm{padding:0;overflow:hidden;touch-action:none;position:relative;width:100%;height:100%}
+
+#hud{position:absolute;top:max(16px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));right:max(16px,env(safe-area-inset-right));display:flex;justify-content:space-between;align-items:center;pointer-events:none;z-index:10}
+#hud .ic{pointer-events:auto;width:36px;height:36px;font-size:16px;background:rgba(20,18,28,.6);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.15);color:#fff}
+
+/* Fix: added height:100% */
+#st{flex:1;min-height:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+canvas{border-radius:16px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 24px 60px -28px #000;display:block}
+
+/* Touch Controls Layout */
+#pd{display:none;position:absolute;bottom:max(16px,env(safe-area-inset-bottom));left:max(24px,env(safe-area-inset-left));right:max(24px,env(safe-area-inset-right));justify-content:space-between;align-items:flex-end;pointer-events:none;z-index:10}
+body.touch #pd{display:flex}
+#pd > *{pointer-events:auto}
+.gp{display:flex;gap:14px}
+.pb{width:76px;height:68px;border-radius:16px;border:2px solid rgba(255,255,255,.15);background:rgba(20,18,28,.4);color:rgba(255,255,255,.6);font-size:24px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background .1s, border-color .1s, color .1s}
+.pb.on{background:rgba(46,230,166,.15);border-color:var(--mint);color:var(--mint)}
+
+#cfm{position:fixed;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:rgba(5,5,9,.7);backdrop-filter:blur(5px)}
+#cfm.show{display:flex}
+#cc{width:min(88vw,340px);background:var(--card);border:1px solid var(--bd);border-radius:24px;padding:26px 22px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;touch-action:auto}
+#cc h2{margin:0 0 6px;font-size:24px;letter-spacing:-.5px}#cc p{margin:0 0 18px;color:var(--mut);line-height:1.45}
+</style></head><body>
+
+<div id="rotate-msg">
+  <div class="mx"></div>
+  <h2>Rotate Device</h2>
+  <p>Please flip your phone to landscape to play.</p>
+</div>
+
+<div class="scr on" id="home"><div class="bar"><span class="eyebrow">Early build</span><span><button class="pill" id="snd"></button><button class="pill" id="rs">Reset</button></span></div><div class="card"><div class="mx"></div><h1>Not Again<i>!</i></h1><p class="sub">A tiny game that lies to you.</p><button class="btn" id="play">Play</button><div class="fn">Works offline · Nothing to install</div></div><div id="wl"></div></div>
+<div class="scr" id="lv"><div class="top"><button class="ic" id="bk1" aria-label="Back">←</button><h2 id="lt"></h2><span style="width:42px"></span></div><div class="lg" id="lg"></div></div>
+<div class="scr" id="gm">
+  <div id="hud"><button class="ic" id="bk2" aria-label="Menu">←</button><button class="ic" id="rst" aria-label="Restart">↻</button></div>
+  <div id="st">
+    <canvas id="c"></canvas>
+    <div id="pd">
+      <div class="gp">
+        <button class="pb" data-k="l">◀</button>
+        <button class="pb" data-k="r">▶</button>
+      </div>
+      <button class="pb" data-k="j">▲</button>
+    </div>
+  </div>
+</div>
+<div id="cfm"><div id="cc"></div></div>
+<script>
+const $=s=>document.querySelector(s),cv=$('#c'),x=cv.getContext('2d'),W=640,H=360;
+// ===== THEMES =====
+const TH=[{bg:'#0c0c14',sol:'#35335c',ac:'#8b5cf6'},{bg:'#0a1118',sol:'#22425a',ac:'#38bdf8'},{bg:'#120b13',sol:'#533049',ac:'#f472b6'},{bg:'#0d0a18',sol:'#40377f',ac:'#a78bfa'},{bg:'#050507',sol:'#d9d4ee',ac:'#ff4d6d'}];
+const WN=[{n:'Training Hell',d:'Simple traps.'},{n:'Trust Issues',d:'Platforms disappear.'},{n:"You're Not Safe",d:'Fake checkpoints.'},{n:'Why Did I Do This?',d:'Invisible traps.'},{n:'Pure Evil',d:'Everything lies to you.'}];
+let TT=TH[0],sv={d:0,m:0,w:WN.map(()=>Array(10).fill(0))};
+try{const q=JSON.parse(localStorage.getItem('na1'));if(q&&q.w)sv=Object.assign(sv,q)}catch(e){}
+const save=()=>{try{localStorage.setItem('na1',JSON.stringify(sv))}catch(e){}};
+
+// ===== SOUND =====
+let ac;const snd=t=>{if(sv.m)return;try{ac=ac||new AudioContext();if(ac.state=='suspended')ac.resume();const n=ac.currentTime,[a,b,d,w]=[
+  [420,640,.09,'sine'],     // 0: Jump
+  [220,70,.28,'triangle'],  // 1: Die
+  [320,640,.4,'triangle'],  // 2: Win (Warm Sweep)
+  [500,520,.04,'sine']      // 3: Menu
+][t],o=ac.createOscillator(),g=ac.createGain();o.type=w;o.frequency.setValueAtTime(a,n);o.frequency.exponentialRampToValueAtTime(b,n+d);g.gain.setValueAtTime(.12,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(ac.destination);o.start(n);o.stop(n+d)}catch(e){}};
+
+// ===== LEVEL-DESIGN SYSTEM =====
+const ov=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y,
+onTop=(o,P)=>P.on&&P.x+P.w>o.x&&P.x<o.x+o.w&&Math.abs(P.y+P.h-o.y)<2,
+rr=(a,b,c,d,r,f)=>{x.fillStyle=f;x.beginPath();x.roundRect(a,b,c,d,r);x.fill()},
+tri=(a,b,w,h,c)=>{x.fillStyle=c;x.beginPath();x.moveTo(a,b);x.lineTo(a+w/2,b-h);x.lineTo(a+w,b);x.fill()};
+
+const M={
+solid:{cat:'base',s:o=>o,d:o=>{rr(o.x,o.y,o.w,o.h,6,TT.sol);rr(o.x+2,o.y,o.w-4,3,2,'rgba(255,255,255,.22)')}},
+spike:{cat:'base',h:o=>({x:o.x+3,y:o.y+7,w:o.w-6,h:o.h-7}),d:o=>{for(let i=0;i<o.w;i+=18)tri(o.x+i,o.y+o.h,18,o.h,'#ff4d6d')}},
+fall:{cat:'trap',s:o=>o.st<2?o:null,u:(o,P)=>{if(!o.st&&(o.pre?P.x+P.w>o.x-o.pre&&P.x<o.x+o.w:onTop(o,P)))o.st=1;if(o.st==1&&++o.t>o.dl)o.st=2;if(o.st==2){o.vy+=.6;o.y+=o.vy}},d:o=>{if(o.y>H+20)return;x.globalAlpha=o.st==2?.6:1;rr(o.x+(o.st==1?Math.sin(o.t*2)*1.5:0),o.y,o.w,o.h,6,TT.sol);x.globalAlpha=1}},
+fake:{cat:'trap',u:(o,P)=>{if(ov(P,o))o.rv=1},d:o=>{x.globalAlpha=o.rv?.3:1;rr(o.x,o.y,o.w,o.h,6,TT.sol);x.globalAlpha=1;if(o.tell){x.strokeStyle='rgba(255,255,255,.5)';x.lineWidth=2;x.setLineDash([5,5]);x.strokeRect(o.x+3,o.y+3,o.w-6,o.h-6);x.setLineDash([])}}},
+wall:{cat:'trap',s:o=>o,u:(o,P)=>{if(ov({x:P.x-2,y:P.y,w:P.w+4,h:P.h},o))o.f=45;else if(o.f>0)o.f--},d:o=>{if(o.f>0){x.globalAlpha=Math.min(1,o.f/30);rr(o.x,o.y,o.w,o.h,6,'#ff4d6d');x.globalAlpha=1}}},
+msp:{cat:'trap',u:o=>{o.x+=o.v;if(o.x<o.x1||o.x>o.x2)o.v=-o.v},h:o=>({x:o.x+3,y:o.y+7,w:o.w-6,h:o.h-7}),d:o=>tri(o.x,o.y+o.h,o.w,o.h,'#c9184a')},
+dsp:{cat:'trap',u:(o,P)=>{if(!o.ar&&Math.abs(P.x+10-o.x-o.w/2)<o.r&&P.y>o.y-90)o.ar=1;if(o.ar){o.t++;o.u=Math.max(0,Math.min(1,(o.t-o.dl)/4))}},h:o=>o.u>.5?{x:o.x+3,y:o.y+o.h*(1-o.u)+6,w:o.w-6,h:o.h*o.u-6}:null,d:o=>{x.strokeStyle='rgba(239,71,111,'+(o.ar?.8:.3)+')';x.lineWidth=2;x.beginPath();x.moveTo(o.x+4,o.y+o.h+1);x.lineTo(o.x+o.w-4,o.y+o.h+1);x.stroke();if(o.u>0)tri(o.x,o.y+o.h,o.w,o.h*o.u,'#ff4d6d')}},
+pole:{cat:'trap',s:o=>o,u:(o,P)=>{if(onTop(o,P)){P.vy=-16;jb=0;snd(0)}},d:o=>{rr(o.x,o.y,o.w,o.h,6,'#8b5cf6');rr(o.x,o.y,o.w,12,4,'#ffd166')}},
+force:{cat:'move',s:o=>o,u:(o,P)=>{if(onTop(o,P)){P.x+=o.v}},d:o=>{rr(o.x,o.y,o.w,o.h,6,TT.sol);x.save();x.clip(new Path2D(`M${o.x},${o.y} h${o.w} v${o.h} h-${o.w} Z`));x.fillStyle='rgba(0,0,0,0.3)';let d=o.v>0?1:-1;let off=(fr*d)%15;if(off<0)off+=15;for(let i=-15;i<o.w;i+=15){x.fillRect(o.x+i+off,o.y,8,o.h)}x.restore()}},
+vanish:{cat:'env',s:o=>o.t<45?o:null,u:(o,P)=>{if(o.t===0&&onTop(o,P))o.t=1;if(o.t>0&&o.t<75)o.t++;if(o.t>=75)o.t=0},d:o=>{if(o.t<45){x.globalAlpha=1-(o.t/45);rr(o.x,o.y,o.w,o.h,6,'#38bdf8');x.globalAlpha=1}}},
+fakedoor:{cat:'mind',h:o=>({x:o.x+4,y:o.y+4,w:o.w-8,h:o.h-8}),d:o=>{rr(o.x,o.y,o.w,o.h,[13,13,3,3],'#ff4d6d');x.fillStyle='#fff';x.beginPath();x.arc(o.x+19,o.y+24,2.5,0,7);x.fill()}}
+};
+
+// helpers
+const GR=(a,b)=>({k:'solid',x:a,y:320,w:b-a,h:40}),PF=(a,y,w)=>({k:'solid',x:a,y,w,h:14}),
+SP=(a,n)=>({k:'spike',x:a,y:302,w:n*18,h:18}),FALL=(a,w,dl=22,pre=0)=>({k:'fall',x:a,y:320,w,h:16,st:0,t:0,vy:0,dl,pre}),
+FAKE=(a,w,tell)=>({k:'fake',x:a,y:320,w,h:40,tell}),WALL=(a,h)=>({k:'wall',x:a,y:320-h,w:16,h,f:0}),
+MSP=(a,b,v)=>({k:'msp',x:a,y:302,w:24,h:18,x1:a,x2:b,v}),DSP=(a,r,dl)=>({k:'dsp',x:a,y:302,w:28,h:18,r,dl,ar:0,t:0,u:0}),
+POLE=(a,y,h)=>({k:'pole',x:a,y:y-h,w:20,h:h}),FORCE=(a,y,w,v)=>({k:'force',x:a,y,w,h:16,v}),
+VANISH=(a,y,w)=>({k:'vanish',x:a,y,w,h:14,t:0}),FAKEDOOR=(a,y=280)=>({k:'fakedoor',x:a,y,w:26,h:40}),
+DOOR=(a,y=280)=>({x:a,y,w:26,h:40});
+
+// ===== WORLD 1 - TRAINING HELL =====
+const LV=[
+()=>({n:'Mix n Match',o:[GR(0,180), VANISH(200,260,60), POLE(280,320,50), FORCE(340,320,100,-2), FAKEDOOR(460), GR(510,640)], d:DOOR(580)}),
+()=>({n:'Conveyor Panic',o:[GR(0,100), FORCE(100,320,120,3.5), SP(220,2), FORCE(260,320,100,-3), FAKEDOOR(380), VANISH(410,240,50), GR(480,640)], d:DOOR(570)}),
+()=>({n:'Leap of Faith',o:[GR(0,120), FAKE(120,60,1), POLE(210,320,80), VANISH(260,180,60), WALL(350,140), GR(400,640)], d:DOOR(580)}),
+()=>({n:'Watch your Step',o:[GR(0,80), FALL(80,50), FORCE(130,320,80,2.5), DSP(210,50,10), VANISH(280,240,40), POLE(360,320,30), GR(420,640)], d:DOOR(560)}),
+()=>({n:'Illusion',o:[GR(0,150), FAKEDOOR(100), VANISH(160,250,50), FAKE(230,80,1), POLE(330,320,70), FORCE(390,200,60,3), GR(470,640)], d:DOOR(580)}),
+()=>({n:'Don\'t Stop',o:[GR(0,120), MSP(120,240,2), VANISH(250,260,50), POLE(320,320,40), FORCE(380,210,80,-2.5), FAKEDOOR(470), GR(510,640)], d:DOOR(590)}),
+()=>({n:'Rising Tension',o:[GR(0,120), FALL(120,60), POLE(190,320,90), VANISH(230,160,50), FORCE(300,280,80,4), DSP(390,60,10), GR(450,640)], d:DOOR(580)}),
+()=>({n:'Mind Games',o:[GR(0,150), FAKE(150,80,0), FAKEDOOR(180), VANISH(250,230,40), FORCE(310,320,100,-4.5), WALL(430,90), POLE(450,320,30), GR(520,640)], d:DOOR(590)}),
+()=>({n:'The Gauntlet',o:[GR(0,100), POLE(120,320,50), VANISH(170,180,50), FORCE(240,320,90,3), MSP(340,430,2.5), FAKE(450,60,1), FAKEDOOR(520), GR(540,640)], d:DOOR(600)}),
+()=>({n:'Hell\'s Exam',o:[GR(0,60), FORCE(60,320,60,4), FALL(120,40), POLE(180,320,60), VANISH(220,180,40), DSP(280,50,8), FAKE(330,50,1), WALL(400,100), FAKEDOOR(430), FORCE(470,220,80,-3), GR(570,640)], d:DOOR(590, 180)})];
+
+// ===== ENGINE =====
+let wi=0,ci=0,lv,P,ph,pt=0,k={},jb=0,co=0,lvd=0,parts=[],fr=0,shk=0,scr='home';
+function start(i,keep){ci=i;if(!keep)lvd=0;lv=LV[i]();TT=TH[wi];P={x:40,y:300,w:20,h:20,vx:0,vy:0,on:0};ph='play';pt=0;parts=[];}
+function die(){if(ph!='play')return;ph='dead';pt=0;lvd++;sv.d++;save();snd(1);shk=8;for(let i=0;i<22;i++)parts.push({x:P.x+10,y:P.y+10,vx:(Math.random()-.5)*7,vy:(Math.random()-.9)*7,l:40});}
+function win(){if(ph!='play')return;ph='win';pt=0;snd(2)}
+function next(){sv.w[wi][ci]=1;save();if(ci<9)start(ci+1);else{ph='done';ask('World cleared','Training Hell is behind you. Trust Issues arrives in the next part.',[['Back to menu',()=>home(),1]])}}
 function step(){
- frame++;
- const zr=lv.zones.some(z=>P.x+10>z.x&&P.x+10<z.x+z.w);
- if(zr&&!lv.fl){lv.fl=1;toast('⇄ CONTROLS SWAPPED!',1800);beep(220,.3,'sawtooth',.06)}
- P.zr=zr;if(zr!==swp){swp=zr;pl.textContent=zr?'▶':'◀';pr.textContent=zr?'◀':'▶'}
- for(const s of lv.solids)if(s.trig&&!s.gone&&P.x>s.trig){s.gone=1;fx=7;burst(s.x+s.w/2,320,T.a,16);beep(160,.15,'sawtooth',.05)}
- const tg=(((zr?k.l:k.r)?1:0)-((zr?k.r:k.l)?1:0))*4.4;P.vx=lv.ice?P.vx+(tg-P.vx)*.07:tg;const gv=lv.gz.some(z=>P.x+10>z.x&&P.x+10<z.x+z.w)?-1:1;P.gv=gv;
- cy=P.on?CY[diff]:cy-1;if(jb>0)jb--;if(jb>0&&cy>0){P.vy=-9.6*gv;jb=0;cy=0;beep(400,.06,'square',.03)}
- P.vy+=.5*gv;P.on=false;
- P.x+=P.vx;
- for(const s of lv.solids){if(s.gone||!hit(P,s))continue;if(P.vx>0)P.x=s.x-P.w;else if(P.vx<0)P.x=s.x+s.w}
- P.y+=P.vy;
- for(const s of lv.solids){if(s.gone||!hit(P,s))continue;
-  if((P.vy>0)==(gv>0)){P.y=gv>0?s.y-P.h:s.y+s.h;P.vy=0;P.on=true}
-  else{P.y=gv>0?s.y+s.h:s.y-P.h;P.vy=0}}
- if(P.x<0)P.x=0;if(P.x>W-P.w)P.x=W-P.w;
- if(P.y>H+40||P.y<-60)return die();
- if(lv.lava){lv.lava.y-=lv.lava.v;if(P.y+P.h>lv.lava.y)return die()}
- for(const s of lv.spikes){if(P.x>s.trig)s.up=1;if(s.up&&s.sh<24)s.sh+=4;if(s.ch&&s.sh>=24)s.x+=Math.sign(P.x-s.x-s.w/2)*2.3*DM;
-  if(hit(P,{x:s.x+5,y:s.c?s.y:s.y-s.sh,w:s.w-10,h:s.sh}))return die()}
- for(const d of lv.drops){if(!d.f&&P.x>d.x-d.td&&P.x<d.x+40){d.f=1;beep(300,.1,'triangle')}
-  if(d.f&&d.dl>0)d.dl--;
-  else if(d.f&&d.y+d.h<320){d.vy+=d.odd?.9:.6;d.y+=d.vy;if(d.y+d.h>=320){d.y=320-d.h;burst(d.x+14,318,'#ddd',8);beep(90,.15,'sawtooth',.06)}}
-  if(hit(P,{x:d.x+4,y:d.y,w:d.w-8,h:d.h}))return die()}
- for(const s of lv.saws){s.x+=s.v;if(s.x<s.min||s.x>s.max)s.v=-s.v;if(hit(P,{x:s.x-s.r+3,y:s.y-s.r+3,w:s.r*2-6,h:s.r*2-6}))return die()}
- for(const b of lv.bats){if(b.off)continue;
-  if(b.d){b.x+=b.dx;b.y+=b.dy}else{b.x+=b.vx;b.y=b.by+Math.sin(frame/12+b.ph)*b.amp;
-   if(b.dive&&b.x>P.x&&b.x-P.x<170&&b.x<W){b.d=1;b.dx=(P.x-b.x)/22;b.dy=(P.y-b.y)/22;beep(700,.12,'sawtooth',.04)}
-   else if(b.x<-30&&!b.dive)b.x=700}
-  if(b.x<-40||b.y>H+40||b.y<-40)b.off=1;
-  if(hit(P,{x:b.x-10,y:b.y-6,w:20,h:12}))return die()}
- if(lv.chase){lv.chase.x+=lv.chase.v;if(P.x<lv.chase.x+24)return die()}
- for(const h of lv.hunters){
-  if(h.off)continue;
-  if(!h.armed&&P.x>h.trig){h.armed=1;h.phase=-(h.grace||0);toast('🚪 THE DOOR WOKE UP!',1400);beep(125,.18,'sawtooth',.07);setTimeout(()=>beep(95,.16,'square',.05),110)}
-  if(h.armed){
-   h.phase++;
-   if(h.phase<0)continue;
-   const target=h.side==='right'?P.x+38:P.x-P.w-12;
-   const delta=target-h.x;
-   const near=Math.max(0,1-Math.min(Math.abs(delta)/220,1));
-   const sp=(.55+near*3.9)*(diff?1.15:.65);
-   const vmax=Math.min(h.maxV||2.5,3.0);
-   h.v+=(Math.sign(delta)*sp-h.v)*.18;
-   h.v=Math.max(-vmax,Math.min(vmax,h.v));
-   h.x+=h.v;
-   if(h.phase%34===0&&Math.abs(delta)<150)beep(180+near*140,.045,'triangle',.018);
-   if(hit(P,{x:h.x,y:h.y,w:h.w,h:h.h}))return die();
-  }
+ const dir=(k.r?1:0)-(k.l?1:0);
+ P.vx+=(dir*4.5-P.vx)*(dir?.35:.4); 
+ P.vy=Math.min(P.vy+.65,14);       
+ if(jb>0)jb--;co=P.on?6:Math.max(0,co-1);
+ if(jb&&co){P.vy=-11.5;jb=0;co=0;snd(0)} 
+ if(!k.j&&P.vy<-4)P.vy+=1;
+ const so=()=>lv.o.map(o=>{const m=M[o.k];return m.s&&m.s(o)}).filter(Boolean);
+ P.x+=P.vx;for(const s of so())if(ov(P,s)){if(P.vx>0)P.x=s.x-P.w;else if(P.vx<0)P.x=s.x+s.w;P.vx=0}
+ P.x=Math.max(0,Math.min(W-P.w,P.x));P.on=0;P.y+=P.vy;
+ for(const s of so())if(ov(P,s)){if(P.vy>0){P.y=s.y-P.h;P.on=1}else P.y=s.y+s.h;P.vy=0}
+ for(const o of lv.o){const m=M[o.k];m.u&&m.u(o,P)}
+ if(P.y>H+30)return die();
+ for(const o of lv.o){const m=M[o.k],h=m.h&&m.h(o);if(h&&ov(P,h))return die()}
+ if(ov(P,lv.d))win()}
+function tick(){fr++;if(shk>0)shk--;
+ if(ph=='dead'){if(++pt>44)start(ci,1)}else if(ph=='win'){if(++pt>36)next()}else if(ph=='play')step()}
+ 
+function draw(){const sc=cv.width/W;x.setTransform(sc,0,0,sc,0,0);x.save();if(shk>0)x.translate((Math.random()-.5)*shk,(Math.random()-.5)*shk);
+ x.fillStyle=TT.bg;x.fillRect(-10,-10,W+20,H+20);
+ 
+ x.fillStyle='rgba(255,255,255,0.02)';
+ x.font='800 90px system-ui,sans-serif';
+ x.textAlign='center';
+ x.fillText('LEVEL '+(ci+1), W/2, H/2+30);
+ x.textAlign='left';
+
+ x.fillStyle=TT.sol;x.globalAlpha=.3;for(const c of[[110,90,80],[420,60,50],[560,200,100]]){x.beginPath();x.arc(c[0],c[1],c[2],0,7);x.fill()}x.globalAlpha=1;
+ for(const o of lv.o)M[o.k].d(o);
+ const d=lv.d;rr(d.x,d.y,d.w,d.h,[13,13,3,3],'#2ee6a6');x.fillStyle='#fff';x.beginPath();x.arc(d.x+19,d.y+24,2.5,0,7);x.fill();
+ if(ph!='dead'){x.save();x.translate(P.x+10,P.y+20);const s=ph=='win'?1-pt/36:1,q=1+Math.min(.25,Math.abs(P.vy)*.02);x.scale(s*(2-q),s*q);rr(-10,-20,20,20,6,'#ffd166');x.fillStyle='#1b1830';const e=Math.max(-2,Math.min(2,P.vx));x.fillRect(-5+e,-13,3,5);x.fillRect(3+e,-13,3,5);x.restore()}
+ for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.l--;x.globalAlpha=Math.max(0,p.l/40);x.fillStyle='#ffd166';x.fillRect(p.x,p.y,5,5)}x.globalAlpha=1;parts=parts.filter(p=>p.l>0);
+ 
+ if(ph=='dead'&&pt>6){x.globalAlpha=Math.min(1,(pt-6)/8)*Math.min(1,(44-pt)/10);x.fillStyle='#f4f2fa';x.font='800 36px system-ui,sans-serif';x.textAlign='center';x.fillText('Not again!',W/2,H/2-30);x.textAlign='left';x.globalAlpha=1}
+ 
+ x.fillStyle='rgba(255,255,255,0.6)';
+ x.font='600 16px system-ui,sans-serif';
+ x.textAlign='center';
+ x.fillText((wi+1)+'-'+(ci+1)+' · '+lv.n, W/2, 28);
+ if(lvd>0){
+    x.fillStyle='#ff4d6d';
+    x.font='600 14px system-ui,sans-serif';
+    x.fillText('Not again ×'+lvd, W/2, 48);
  }
- for(const e of lv.exits){
-  const t=e.dg&&e.dg[e.i|0];if(t&&Math.abs(P.x-e.x)<t.near&&Math.abs(P.y-e.y)<70){e.x=t.x;e.y=t.y;e.i=(e.i|0)+1;beep(900,.1,'triangle');burst(e.x+12,e.y+20,'#7dffb0',12)}
-  if(hit(P,e)){return e.fake?die():win(e)}}
-}
-function draw(){
- const sc=cv.width/W;x.setTransform(sc,0,0,sc,0,0);x.save();if(fx>0){x.translate((Math.random()-.5)*fx,(Math.random()-.5)*fx);fx--}
- x.fillStyle=T.bg;x.fillRect(-10,-10,W+20,H+20);
- x.fillStyle=T.a;x.globalAlpha=.3;for(let i=0;i<26;i++){const sp=.3+(i%4)*.25,dy=T.dy||0,py=dy?(((i*53+frame*sp*dy)%320)+320)%320:(i*53)%320;x.fillRect((i*97+Math.sin(frame/40+i)*8)%W,py,2,2)}x.globalAlpha=1;
- for(const z of lv.gz){x.fillStyle='rgba(80,220,255,.13)';x.fillRect(z.x,0,z.w,320);x.fillStyle='rgba(150,240,255,.6)';x.font='22px system-ui';for(let i=0;i<z.w/45;i++)x.fillText('↑',z.x+12+i*45,((frame*2+i*70)%300)+20)}
- for(const z of lv.zones){const q=.5+.5*Math.sin(frame/8);x.fillStyle='rgba(160,90,255,.14)';x.fillRect(z.x,0,z.w,320);for(const px of[z.x,z.x+z.w]){x.fillStyle='rgba(200,140,255,'+(.5+.4*q)+')';x.fillRect(px-4,0,8,320);x.fillStyle='#fff';x.fillRect(px-1,0,2,320)}x.fillStyle='rgba(215,170,255,.85)';x.font='bold 16px system-ui';x.textAlign='center';x.fillText('⇄ SWAP',z.x+z.w/2,60);x.font='bold 26px system-ui';x.fillText('⇄',z.x+z.w/2,300);x.textAlign='left'}
- for(const s of lv.solids){if(s.gone)continue;
-  if(s.v){x.globalAlpha=.75+.25*Math.sin(frame/4);x.fillStyle='#4a4270';x.fillRect(s.x,s.y,s.w,s.h);x.strokeStyle='#b7a8ff';x.setLineDash([6,6]);x.strokeRect(s.x+1,s.y+1,s.w-2,s.h-2);x.setLineDash([]);x.globalAlpha=1}
-  else{x.fillStyle=T.g;x.fillRect(s.x,s.y,s.w,s.h);x.fillStyle=T.t;x.fillRect(s.x,s.y,s.w,4);
-   if(s.trig&&!s.hid){x.strokeStyle='#1d1a2b';x.lineWidth=2;x.beginPath();for(let i=0;i<3;i++){x.moveTo(s.x+10+i*20,s.y);x.lineTo(s.x+16+i*20,s.y+14);x.lineTo(s.x+8+i*20,s.y+26)}x.stroke();x.lineWidth=1}}}
- x.fillStyle=T.sp;
- for(const s of lv.spikes){x.beginPath();x.moveTo(s.x,s.y);x.lineTo(s.x+s.w/2,s.y+(s.c?s.sh:-s.sh));x.lineTo(s.x+s.w,s.y);x.fill()}
- x.fillStyle='#e8e8f0';
- for(const d of lv.drops){const o=d.odd&&!d.f;x.fillStyle=o?'#ffb3c6':T.sp;const w=o?Math.sin(frame/2)*1.5:0;x.beginPath();x.moveTo(d.x+w,d.y);x.lineTo(d.x+d.w+w,d.y);x.lineTo(d.x+d.w/2+w,d.y+d.h);x.fill()}
- for(const s of lv.saws){x.fillStyle=T.sw;x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill();x.strokeStyle='#e74c3c';x.lineWidth=3;x.beginPath();const a=frame/3;x.moveTo(s.x-Math.cos(a)*s.r,s.y-Math.sin(a)*s.r);x.lineTo(s.x+Math.cos(a)*s.r,s.y+Math.sin(a)*s.r);x.stroke();x.lineWidth=1}
- for(const b of lv.bats){if(b.off)continue;const f=Math.sin(frame/3)*7;x.fillStyle=b.dive?'#ff6b8b':'#7ea6ff';x.beginPath();x.ellipse(b.x,b.y,8,6,0,0,7);x.fill();x.beginPath();x.moveTo(b.x-6,b.y);x.lineTo(b.x-18,b.y-8+f);x.lineTo(b.x-4,b.y+4);x.moveTo(b.x+6,b.y);x.lineTo(b.x+18,b.y-8+f);x.lineTo(b.x+4,b.y+4);x.fill();x.fillStyle='#fff';x.fillRect(b.x-4,b.y-2,2,2);x.fillRect(b.x+2,b.y-2,2,2)}
- for(const h of lv.hunters){if(h.off)continue;const q=h.armed?(.5+.5*Math.sin(frame/3)):0;x.save();x.globalAlpha=.96;x.fillStyle=h.armed?'#5a1620':'#352b45';x.fillRect(h.x,h.y,h.w,h.h);x.strokeStyle=h.armed?'#ff4f68':'#8e7cc3';x.lineWidth=2;x.strokeRect(h.x+1,h.y+1,h.w-2,h.h-2);x.fillStyle=h.armed?'#ff657c':'#b9a9d8';x.fillRect(h.x+5,h.y+9,h.w-10,6);x.fillStyle=h.armed?'#ffd1d9':'#222';x.beginPath();x.arc(h.x+h.w/2,h.y+24,7+q*2,0,7);x.fill();x.fillStyle=h.armed?'#ff4f68':'#eee';x.fillRect(h.x+h.w/2-2,h.y+21,4,7);if(h.armed){x.fillStyle='rgba(255,70,100,'+(0.06+q*.07)+')';x.fillRect(h.x-18,h.y-18,h.w+36,h.h+36)}x.restore()}
- if(lv.lava){x.fillStyle='#ff5a1f';x.beginPath();x.moveTo(0,H);for(let i=0;i<=W;i+=20)x.lineTo(i,lv.lava.y+Math.sin(i/30+frame/10)*4);x.lineTo(W,H);x.fill()}
- if(lv.chase){x.fillStyle='#c0392b';x.fillRect(lv.chase.x-20,0,44,320)}
- for(const e of lv.exits){x.fillStyle='#4fa86b';x.fillRect(e.x,e.y,e.w,e.h);
-  if(e.dg&&(e.i|0)<e.dg.length){x.strokeStyle='#fff';x.setLineDash([4,4]);x.strokeRect(e.x,e.y,e.w,e.h);x.setLineDash([])}
-  if(!e.fake){x.fillStyle='#fff';x.fillRect(e.x+e.w-8,e.y+20,4,4)}}
- drawP();
- for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.l--;x.fillStyle=p.c;x.globalAlpha=p.l/40;x.fillRect(p.x,p.y,4,4)}
- x.globalAlpha=1;for(let i=parts.length;i--;)if(parts[i].l<=0)parts.splice(i,1);
- let dangerQ=0;for(const h of lv.hunters)if(!h.off&&h.armed)dangerQ=Math.max(dangerQ,Math.max(0,1-Math.abs(h.x-P.x)/180));if(dangerQ>0){x.fillStyle='rgba(255,40,70,'+(dangerQ*.12)+')';x.fillRect(0,0,W,H);if(frame%8===0)fx=Math.max(fx,Math.ceil(dangerQ))}
- if(P.zr){x.fillStyle='rgba(150,80,255,.10)';x.fillRect(0,0,W,H)}
+ x.textAlign='left';
+
  x.restore()}
-function endScreen(){const sc=cv.width/W;x.setTransform(sc,0,0,sc,0,0);x.fillStyle=T.bg;x.fillRect(0,0,W,H);x.fillStyle='#ffd166';x.textAlign='center';x.font='28px system-ui';
- x.fillText('You escaped Devil Calling Hell! 😈',W/2,150);x.font='18px system-ui';x.fillStyle='#fff';
- x.fillText('Total deaths: '+tot+' — every one was research.',W/2,190);x.fillText('Tap / click / press Space to play again',W/2,230);x.fillText('Tip: Devil mode adds traps that actively hunt your position.',W/2,258);x.textAlign='left'}
-let last=0,acc=0;
-function loop(t){const dt=Math.min(t-last,100);last=t;
- if(!document.hidden&&!paused){if(done)endScreen();else{acc+=dt;let n=0;while(acc>=16.667&&n++<4){tick();acc-=16.667}if(n>=4)acc=0;draw()}}
- requestAnimationFrame(loop)}
-function again(){if(done){done=false;tot=0;load(0)}}
-const map={ArrowLeft:'l',a:'l',A:'l',ArrowRight:'r',d:'r',D:'r',ArrowUp:'j',w:'j',W:'j',' ':'j',z:'j',Z:'j'};
-function unlock(){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state=='suspended')ac.resume()}catch(e){}}
-function save(){try{push();localStorage.setItem('dch2',JSON.stringify({d:diff,m:mute,p:DS.map(o=>({c:o.c,t:o.t,u:o.u,s:o.s.join(''),a:o.a.join(',')}))}));}catch(e){}}
-function togMute(){mute=!mute;$('mute').textContent=mute?'🔇':'🔊';save()}
-function press(n,v){if(paused&&v)return;if(n=='j'&&v&&!k.j)jb=7;k[n]=v?1:0;if(v){unlock();again()}}
-addEventListener('keydown',e=>{const n=map[e.key];if(n){e.preventDefault();press(n,1)}else if(e.key.toLowerCase()==='h'){e.preventDefault();showHint()}else if(e.key=='m')togMute();else if(e.key=='Escape'){if(hintOpen)hideHint();else (paused?hideMap:showMap)()}else if(e.key=='p')(paused?hideMap:showMap)()});
-addEventListener('keyup',e=>{const n=map[e.key];if(n)press(n,0)});
-document.querySelectorAll('.pad').forEach(b=>{const n=b.dataset.k,up=()=>{b.classList.remove('on');press(n,0)};
- b.addEventListener('pointerdown',e=>{e.preventDefault();try{b.setPointerCapture(e.pointerId)}catch(_){}b.classList.add('on');press(n,1)});
- ['pointerup','pointercancel','lostpointercapture'].forEach(t=>b.addEventListener(t,up))});
-cv.addEventListener('pointerdown',()=>{unlock();again()});
-const rel=()=>{k.l=k.r=k.j=0;document.querySelectorAll('.pad').forEach(b=>b.classList.remove('on'))};
-addEventListener('blur',rel);document.addEventListener('visibilitychange',rel);
-document.addEventListener('contextmenu',e=>e.preventDefault());
-$('mute').onclick=togMute;
-function showHint(){if(diff!==1||attempts[cur]<5)return;hintOpen=true;paused=true;$('hintTitle').textContent='💡 Level '+(cur+1)+' Hint';$('hintSub').textContent=lv.name+' · Devil / Extreme';$('hintText').textContent=DEVIL_HINTS[cur]||lv.hint;$('hintPanel').classList.add('show');rel();beep(560,.12,'triangle',.035)}
-function hideHint(){hintOpen=false;$('hintPanel').classList.remove('show');if(!$('map').classList.contains('show'))paused=false}
-$('hintBtn').onclick=showHint;$('hintClose').onclick=hideHint;$('hintPanel').addEventListener('click',e=>{if(e.target===$('hintPanel'))hideHint()});
-function mark(i,v){if(st[i]!==1)st[i]=v;u=Math.max(u,Math.min(i+1,LV.length-1));save()}
-function buildMap(){let h='',w=-1;$('msub').textContent=st.filter(v=>v==1).length+' / '+LV.length+' cleared · ☠ '+tot;[0,1].forEach(d=>$('ds'+d).classList.toggle('on',d==diff));if($('map').classList.contains('pick'))$('msub').textContent='Choose your difficulty to begin';
- for(let i=0;i<LV.length;i++){const t=thI(i),C=TH[t];if(t!==w){if(w>=0)h+='</div>';w=t;h+='<div class="wh" style="color:'+C.a+'">'+C.n.toUpperCase()+' WORLD</div><div class="lg">'}
-  const lk=i>u,c=lk?'':st[i]==1?' dn':st[i]==2?' sk':'';
-  h+='<button class="lb'+c+(i==cur?' cu':'')+'" style="--c:'+C.a+'" data-i="'+i+'"'+(lk?' disabled':'')+'>'+(lk?'🔒<small>'+(i+1)+'</small>':'<span>'+(i+1)+(st[i]==1?' ✓':st[i]==2?' ⏭':'')+'</span><small>'+NAMES[i]+'</small>')+'</button>'}
- $('mlist').innerHTML=h+'</div>'}
-function showMap(){if(hintOpen)hideHint();buildMap();$('map').classList.add('show');paused=true;rel()}
-function hideMap(){$('map').classList.remove('show');paused=false}
-function openLevel(i){if(i>u)return;done=false;hideMap();load(i)}
-function pull(){const D=DS[diff];st=D.s;u=D.u;tot=D.t;attempts=D.a}
-function push(){const D=DS[diff];D.u=u;D.t=tot;D.c=cur;D.a=attempts}
-function dsel(d){const pk=$('map').classList.contains('pick');push();diff=Math.max(0,Math.min(1,d|0));pull();cur=Math.min(DS[diff].c,u);done=false;load(cur);if(pk){$('map').classList.remove('pick');openLevel(cur)}else buildMap()}
-let sv={};try{sv=JSON.parse(localStorage.getItem('dch2'))||{}}catch(e){}
-const first=sv.d===undefined;mute=!!sv.m;diff=first?0:Math.min(1,sv.d|0);$('mute').textContent=mute?'🔇':'🔊';
-(sv.p||[]).forEach((o,d)=>{const D=DS[d];if(!D)return;D.c=o.c|0;D.t=o.t|0;D.u=Math.min(o.u|0,LV.length-1);for(let i=0;i<LV.length;i++)D.s[i]=+(o.s||'')[i]||0;const aa=String(o.a||'').split(',');for(let i=0;i<LV.length;i++)D.a[i]=Math.max(0,parseInt(aa[i]||'0',10)||0)});
-pull();load(Math.min(DS[diff].c,u));
-$('mapb').onclick=showMap;$('mclose').onclick=hideMap;$('mcont').onclick=()=>openLevel(cur);
-$('mlist').addEventListener('click',e=>{const b=e.target.closest('.lb');if(b&&!b.disabled)openLevel(+b.dataset.i)});
-if(first)$('map').classList.add('pick');[0,1].forEach(d=>$('ds'+d).onclick=()=>dsel(d));showMap();requestAnimationFrame(loop);
+let last=0,acc=0;function loop(t){const dt=Math.min(t-last,100);last=t;if(scr=='gm'&&lv){acc+=dt;let n=0;while(acc>=16.667&&n++<4){tick();acc-=16.667}if(n>=4)acc=0;draw()}requestAnimationFrame(loop)}
+
+// ===== SCREENS =====
+function show(id){scr=id;document.querySelectorAll('.scr').forEach(e=>e.classList.toggle('on',e.id==id));if(id=='gm')fit()}
+function home(){const nx=sv.w[0].indexOf(0),any=sv.w[0].some(Boolean);$('#play').textContent=any?'Continue':'Play';$('#play').onclick=()=>{snd(3);wi=0;show('gm');start(nx<0?0:nx)};
+ $('#wl').innerHTML=WN.map((n,i)=>{const ok=!i,p=sv.w[i].filter(Boolean).length;return'<button class="wc" data-w="'+i+'"'+(ok?'':' disabled')+'><div class="wh"><span class="wl" style="color:'+TH[i].ac+'">WORLD '+(i+1)+'</span><b>'+n.n+'</b><span class="wp">'+(ok?p+'/10':'Soon')+'</span></div><small>'+n.d+'</small>'+(ok?'<div class="ch">'+['Falling floor','Fake floor','Invisible wall','Moving spike','Delayed spike','Bouncer Pole','Conveyor','Vanish Platform','Fake Door'].map(c=>'<span>'+c+'</span>').join('')+'</div><div class="pg"><i style="width:'+p*10+'%"></i></div>':'')+'</button>'}).join('');
+ $('#snd').textContent=sv.m?'Sound off':'Sound on';show('home')}
+function lvls(w){wi=w;$('#lt').textContent=WN[w].n;$('#lg').innerHTML=LV.map((_,i)=>'<button class="lb'+(sv.w[w][i]?' dn':'')+'" data-i="'+i+'"'+(i&&!sv.w[w][i-1]&&!sv.w[w][i]?' disabled':'')+'>'+(i+1)+'</button>').join('');show('lv')}
+function ask(h,t,b){$('#cc').innerHTML='<h2>'+h+'</h2><p>'+t+'</p>'+b.map((q,i)=>'<button class="btn'+(q[2]?'':' ghost')+'" data-i="'+i+'">'+q[0]+'</button>').join('');$('#cfm').classList.add('show');$('#cc').onclick=e=>{const i=e.target.dataset.i;if(i==null)return;$('#cfm').classList.remove('show');b[i][1]&&b[i][1]()}}
+$('#wl').onclick=e=>{const b=e.target.closest('.wc');if(b&&!b.disabled){snd(3);lvls(+b.dataset.w)}};
+$('#lg').onclick=e=>{const b=e.target.closest('.lb');if(b&&!b.disabled){snd(3);show('gm');start(+b.dataset.i)}};
+$('#bk1').onclick=home;$('#bk2').onclick=()=>lvls(wi);$('#rst').onclick=()=>start(ci,1);
+$('#snd').onclick=()=>{sv.m=sv.m?0:1;save();$('#snd').textContent=sv.m?'Sound off':'Sound on';snd(3)};
+$('#rs').onclick=()=>ask('Reset progress?','All cleared levels and your death count will be erased.',[['Cancel'],['Reset',()=>{sv={d:0,m:sv.m,w:WN.map(()=>Array(10).fill(0))};save();home()},1]]);
+
+// ===== INPUT =====
+const km={ArrowLeft:'l',a:'l',A:'l',ArrowRight:'r',d:'r',D:'r',ArrowUp:'j',w:'j',W:'j',' ':'j',z:'j'};
+function press(n,v){if(n=='j'&&v&&!k.j)jb=8;k[n]=v?1:0}
+addEventListener('keydown',e=>{const n=km[e.key];if(n&&scr=='gm'){e.preventDefault();press(n,1)}else if((e.key=='r'||e.key=='R')&&scr=='gm')start(ci,1);else if(e.key=='Escape'&&scr=='gm')lvls(wi)});
+addEventListener('keyup',e=>{const n=km[e.key];if(n)press(n,0)});
+document.querySelectorAll('.pb').forEach(b=>{const n=b.dataset.k,up=()=>{b.classList.remove('on');press(n,0)};b.addEventListener('pointerdown',e=>{e.preventDefault();try{b.setPointerCapture(e.pointerId)}catch(_){}b.classList.add('on');press(n,1)});['pointerup','pointercancel','lostpointercapture'].forEach(t=>b.addEventListener(t,up))});
+addEventListener('blur',()=>{k={}});document.addEventListener('contextmenu',e=>e.preventDefault());
+if(navigator.maxTouchPoints>0)document.body.classList.add('touch');
+addEventListener('pointerdown',e=>{if(e.pointerType=='touch')document.body.classList.add('touch')});
+const st=$('#st');function fit(){const d=Math.min(devicePixelRatio||1,2),w=Math.max(160,Math.min(st.clientWidth-16,(st.clientHeight-8)*16/9)|0),h=w*9/16|0;cv.style.width=w+'px';cv.style.height=h+'px';cv.width=Math.round(w*d);cv.height=Math.round(h*d)}
+new ResizeObserver(fit).observe(st);
+home();requestAnimationFrame(loop);
 </script></body></html>
